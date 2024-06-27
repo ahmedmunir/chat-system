@@ -1,0 +1,6 @@
+:queues:
+  - default
+:schedule:
+  update_counters_worker:
+    cron: "0 * * * *" # runs every hour
+    class: "UpdateCountersWorker"

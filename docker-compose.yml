@@ -1,0 +1,64 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: chat_system_development
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  web:
+    build: .
+    command: bundle exec rails s -b '0.0.0.0'
+    volumes:
+      - ".:/app"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+    environment:
+      MYSQL_HOST: db
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: chat_system_development
+      REDIS_URL: redis://redis:6379/0
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+
+  sidekiq:
+    build: .
+    entrypoint: /usr/bin/sidekiq_entrypoint.sh
+    command: bundle exec sidekiq
+    volumes:
+      - ".:/app"
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+      - web
+    environment:
+      MYSQL_HOST: db
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: chat_system_development
+      REDIS_URL: redis://redis:6379/0
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+
+volumes:
+  db_data:
