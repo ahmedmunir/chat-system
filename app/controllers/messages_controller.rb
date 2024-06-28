@@ -17,11 +17,6 @@ class MessagesController < ApplicationController
   def create
     application = Application.find_by(token: params[:application_token])
     if application
-      puts "Application found"
-      application.chats.each do |chat|
-        puts "Chat number: #{chat.number}"
-      end
-      puts "Chat number: #{params[:chat_number]}"
       chat = application.chats.find_by(number: params[:chat_number])
       if chat
         message = chat.messages.create(message_params)

@@ -1,6 +1,7 @@
 class Message < ApplicationRecord
   belongs_to :chat, counter_cache: true
   validates :number, presence: true, uniqueness: { scope: :chat_id }
+  validates :body, presence: true
 
   before_validation :set_message_number, on: :create
 

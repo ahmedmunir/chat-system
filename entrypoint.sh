@@ -13,6 +13,9 @@ done
 if ! mysql -h "$MYSQL_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "use $MYSQL_DATABASE"; then
   # If the database does not exist, create and migrate
   bundle exec rails db:create db:migrate
+
+  # Create the test database
+  bundle exec rails db:create db:migrate RAILS_ENV=test
 else
   # If the database exists, just migrate
   bundle exec rails db:migrate
