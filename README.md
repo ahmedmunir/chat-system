@@ -464,7 +464,7 @@ To import the Postman collection, use the following JSON:
 }
 ```
 
-## Testing the Setup
+## RUN Testing
 To run unit testing you need to run this command after docker is ready and up
 ```sh
 docker-compose run web bundle exec rspec
